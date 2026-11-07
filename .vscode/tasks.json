@@ -1,0 +1,78 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Generate localization",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"intl_utils:generate"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate localization",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"intl_utils:generate"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate localization",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"intl_utils:generate"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate localization",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"intl_utils:generate"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate localization",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"run",
+				"intl_utils:generate"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Analyze Home",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze",
+				"lib\\Feature\\Home"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$dart-analyze"
+			]
+		}
+	]
+}

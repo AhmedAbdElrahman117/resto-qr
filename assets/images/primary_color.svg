@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <circle id="redCircle" cx="300" cy="210" r="140" />
+    <circle id="greenCircle" cx="220" cy="350" r="140" />
+    <circle id="blueCircle" cx="380" cy="350" r="140" />
+
+    <clipPath id="clipG">
+      <use href="#greenCircle" />
+    </clipPath>
+    <clipPath id="clipB">
+      <use href="#blueCircle" />
+    </clipPath>
+  </defs>
+
+  <use href="#redCircle" fill="#FF0000" />
+  <use href="#greenCircle" fill="#00FF00" />
+  <use href="#blueCircle" fill="#0000FF" />
+
+  <use href="#redCircle" fill="#FFFF00" clip-path="url(#clipG)" />
+  <use href="#greenCircle" fill="#00FFFF" clip-path="url(#clipB)" />
+  <use href="#redCircle" fill="#FF00FF" clip-path="url(#clipB)" />
+
+  <g clip-path="url(#clipG)">
+    <use href="#redCircle" fill="#F8F8F8" clip-path="url(#clipB)" />
+  </g>
+
+  <use href="#redCircle" fill="none" stroke="#121212" stroke-width="4" />
+  <use href="#greenCircle" fill="none" stroke="#121212" stroke-width="4" />
+  <use href="#blueCircle" fill="none" stroke="#121212" stroke-width="4" />
+</svg>
