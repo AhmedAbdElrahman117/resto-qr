@@ -38,7 +38,7 @@ class _LanguageViewState extends State<LanguageView> {
         onChanged: (value) {
           context.read<AppCubit>().changeLanguage(
             languageCode: value!,
-            languageName: _languages.firstWhere((e) => e.code == value).code,
+            languageName: _languages.firstWhere((e) => e.code == value).name,
           );
         },
         groupValue: currentLanguage,
