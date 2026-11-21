@@ -19,19 +19,15 @@ class MapCubit extends Cubit<MapState> with SafeCubit {
   StreamSubscription? _gpsStatusStream;
   StreamSubscription? _placesSubscription;
 
-  MbxImage? marker;
+  StyleImage? marker;
 
-  Future<MbxImage?> loadCustomMarkerImage() async {
+  Future<StyleImage?> loadCustomMarkerImage() async {
     final ByteData byteData = await rootBundle.load(Assets.imagesMarker);
     final Uint8List imageBytes = byteData.buffer.asUint8List();
 
     final image = await decodeImageFromList(imageBytes);
 
-    return MbxImage(
-      width: image.width,
-      height: image.height,
-      data: imageBytes,
-    );
+    return StyleImage.fromImage(image);
   }
 
   void initMap({

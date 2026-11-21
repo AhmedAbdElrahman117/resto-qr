@@ -10,7 +10,7 @@ class MapLoadingInitState extends MapState {}
 class MapInitalized extends MapState {
   final double? initialLat;
   final double? initialLng;
-  final MbxImage? marker;
+  final StyleImage? marker;
   final String mapKey;
 
   MapInitalized({

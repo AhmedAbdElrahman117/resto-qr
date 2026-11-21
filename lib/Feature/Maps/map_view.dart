@@ -28,27 +28,86 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  // ---------------------------------------------------------------------------
+  // Constants
+  // ---------------------------------------------------------------------------
+  static const double _initialZoom = 14;
+
+  static const String _sourceId = 'places-source';
+  static const String _clustersLayerId = 'clusters';
+  static const String _clusterCountLayerId = 'cluster-count';
+  static const String _unclusteredLayerId = 'unclustered-points';
+  static const String _markerImageId = 'custom-marker';
+
+  // Mapbox Standard style: the theme is driven by the `lightPreset` config of
+  // the `basemap` import, so switching light/dark never reloads the style.
+  static const String _basemapImportId = 'basemap';
+  static const String _lightPresetKey = 'lightPreset';
+  static const String _lightPresetDay = 'day';
+  static const String _lightPresetNight = 'night';
+
+  // ---------------------------------------------------------------------------
+  // Map state
+  // ---------------------------------------------------------------------------
   MapboxMap? mapController;
   CameraOptions? position;
   Timer? _debounceTimer;
   Position? lastFetchedPosition;
-  double zoom = 14;
+  double zoom = _initialZoom;
+
   final ValueNotifier<PlaceModel?> selectedPlace = ValueNotifier<PlaceModel?>(
     null,
   );
-
-  late final AppLifecycleListener _lifecycleListener;
   final ValueNotifier<bool> showCurrentLocationButton = ValueNotifier<bool>(
-    false
+    false,
   );
 
+  late final AppLifecycleListener _lifecycleListener;
+
   List<PlaceModel> _cachedPlaces = [];
-  MbxImage? _markerImage;
+  StyleImage? _markerImage;
   bool _isStyleLoaded = false;
+
+  /// Created once, so rebuilding [MapWidget] never re-applies the initial
+  /// camera and snaps the map back to where it started.
+  CameraViewportState? _initialViewport;
+
+  /// Last `MapInitalized` state that was handled, so the (idempotent) handler
+  /// does not overwrite [position] on unrelated rebuilds.
+  MapInitalized? _handledInitState;
+  String? _appliedMapKey;
+
+  // ---------------------------------------------------------------------------
+  // Theme state (driven by AppCubit, applied through the Standard lightPreset)
+  // ---------------------------------------------------------------------------
+  late bool _isDark;
+  StreamSubscription<Object?>? _themeSubscription;
+
+  // ---------------------------------------------------------------------------
+  // Serialized map operations
+  // ---------------------------------------------------------------------------
+  Future<void> _syncChain = Future<void>.value();
+  bool _placesSyncPending = false;
 
   @override
   void initState() {
     super.initState();
+
+    final appCubit = context.read<AppCubit>();
+    _isDark = appCubit.state.mode == ThemeMode.dark;
+    _themeSubscription = appCubit.stream.listen((state) {
+      final isDark = state.mode == ThemeMode.dark;
+      if (isDark == _isDark) return;
+      _isDark = isDark;
+
+      // AppTheme colors come from the widget tree, so wait for the new theme
+      // to be built before reading them.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _enqueue(_applyTheme);
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+    });
+
     _lifecycleListener = AppLifecycleListener(
       onPause: () {
         if (mounted) context.read<MapCubit>().stopLocationStream();
@@ -59,6 +118,9 @@ class _MapViewState extends State<MapView> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,36 +141,32 @@ class _MapViewState extends State<MapView> {
               );
             }
 
-            final location = (state as MapInitalized);
-            _markerImage = location.marker;
+            final location = state as MapInitalized;
+
+            // Idempotent. Guarantees the token is set before the first
+            // MapWidget is created, even if the listener missed this state.
+            _handleInitialized(location);
+
+            _initialViewport ??= CameraViewportState(
+              center: Point(
+                coordinates: Position(
+                  location.initialLng ?? 0,
+                  location.initialLat ?? 0,
+                ),
+              ),
+              zoom: _initialZoom,
+            );
 
             return Stack(
               children: [
                 MapWidget(
-                  viewport: CameraViewportState(
-                    center: Point(
-                      coordinates: Position(
-                        location.initialLng ?? 0,
-                        location.initialLat ?? 0,
-                      ),
-                    ),
-                    zoom: zoom,
-                  ),
+                  viewport: _initialViewport!,
                   onMapCreated: _onMapCreated,
                   onCameraChangeListener: _onCameraChangeListener,
                   onStyleLoadedListener: (styleLoadedEventData) {
-                    _onStyleLoaded(markerBytes: _markerImage);
+                    _onStyleLoaded();
                   },
-                  // ignore: deprecated_member_use
-                  onTapListener: (MapContentGestureContext tapContext) {
-                    if (selectedPlace.value != null) {
-                      selectedPlace.value = null;
-                    }
-                  },
-                  styleUri:
-                      context.watch<AppCubit>().state.mode == ThemeMode.dark
-                      ? MapboxStyles.DARK
-                      : MapboxStyles.STANDARD,
+                  styleUri: MapboxStyles.STANDARD,
                 ),
 
                 Align(
@@ -174,6 +232,50 @@ class _MapViewState extends State<MapView> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Bloc handling
+  // ---------------------------------------------------------------------------
+  void _handleInitialized(MapInitalized state) {
+    if (identical(_handledInitState, state)) return;
+    _handledInitState = state;
+
+    if (_appliedMapKey != state.mapKey) {
+      MapboxOptions.setAccessToken(state.mapKey);
+      _appliedMapKey = state.mapKey;
+    }
+
+    _markerImage = state.marker;
+
+    final lng = state.initialLng;
+    final lat = state.initialLat;
+    if (lng != null && lat != null) {
+      position = CameraOptions(
+        center: Point(coordinates: Position(lng, lat)),
+        zoom: zoom,
+      );
+    }
+  }
+
+  void _listener(BuildContext _, MapState state) async {
+    if (state is MapInitalized) {
+      _handleInitialized(state);
+    } else if (state is MapLocationUpdated) {
+      position = CameraOptions(
+        center: Point(
+          coordinates: Position(state.lng, state.lat),
+        ),
+        zoom: zoom,
+      );
+      await updateLocation();
+    } else if (state is MapPlacesLoaded) {
+      _cachedPlaces = state.places;
+      _schedulePlacesSync();
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Camera
+  // ---------------------------------------------------------------------------
   void _onCameraChangeListener(CameraChangedEventData cameraChangedEventData) {
     zoom = cameraChangedEventData.cameraState.zoom.toDouble();
     final currentLng = cameraChangedEventData.cameraState.center.coordinates.lng
@@ -195,6 +297,7 @@ class _MapViewState extends State<MapView> {
     if (_debounceTimer?.isActive == true) _debounceTimer?.cancel();
 
     _debounceTimer = Timer(const Duration(seconds: 1), () {
+      if (!mounted) return;
       lastFetchedPosition = Position(currentLng, currentLat);
       context.read<MapCubit>().getMapLocations(
         lng: currentLng,
@@ -203,6 +306,39 @@ class _MapViewState extends State<MapView> {
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // Serialized sync
+  //
+  // Every operation that touches the style (image, source, layers, preset) goes
+  // through [_enqueue], so two of them can never interleave their awaits (e.g.
+  // both seeing "source does not exist" and both trying to add it).
+  // ---------------------------------------------------------------------------
+  void _enqueue(Future<void> Function() task) {
+    _syncChain = _syncChain.then((_) async {
+      if (!mounted) return;
+      try {
+        await task();
+      } catch (e, s) {
+        log('Map sync failed: $e', error: e, stackTrace: s);
+      }
+    });
+  }
+
+  /// Coalesces bursts: while a places sync is waiting in the queue, further
+  /// requests are no-ops because the task always reads the latest
+  /// [_cachedPlaces] when it actually runs.
+  void _schedulePlacesSync() {
+    if (_placesSyncPending) return;
+    _placesSyncPending = true;
+    _enqueue(() async {
+      _placesSyncPending = false;
+      await _applyPlaces();
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Places source + layers
+  // ---------------------------------------------------------------------------
   String _createGeoJson(List<PlaceModel> places) {
     final features = places.map((place) {
       return {
@@ -221,131 +357,145 @@ class _MapViewState extends State<MapView> {
     });
   }
 
-  Future<void> _updateOrAddPlacesSource(List<PlaceModel> places) async {
-    if (mapController == null || !_isStyleLoaded || places.isEmpty) return;
+  Future<void> _applyPlaces() async {
+    final map = mapController;
+    final places = _cachedPlaces;
+    if (!mounted || map == null || !_isStyleLoaded || places.isEmpty) return;
 
     final geoJsonString = _createGeoJson(places);
     final textColor = AppTheme().primaryText(context, false).toARGB32();
 
-    final sourceExists =
-        await mapController?.style.styleSourceExists("places-source") ?? false;
+    final sourceExists = await map.styleSourceExists(_sourceId);
 
     if (sourceExists) {
-      final source =
-          await mapController?.style.getSource("places-source")
-              as GeoJsonSource;
+      final source = await map.getSource(_sourceId) as GeoJsonSource;
       await source.updateGeoJSON(geoJsonString);
-    } else {
-      await mapController?.style.addSource(
-        GeoJsonSource(
-          id: "places-source",
-          data: geoJsonString,
-          cluster: true,
-          clusterMinPoints: 2,
-          clusterMaxZoom: 14,
-          clusterRadius: 50,
-        ),
-      );
-
-      await mapController?.style.addLayer(
-        CircleLayer(
-          id: "clusters",
-          sourceId: "places-source",
-          filter: ['has', 'point_count'],
-          circleColor: AppConstants().neonBlue.toARGB32(),
-          circleRadius: 18.0,
-          circleStrokeWidth: 2.0,
-          circleStrokeColor: Colors.white.toARGB32(),
-        ),
-      );
-
-      await mapController?.style.addLayer(
-        SymbolLayer(
-          id: "cluster-count",
-          sourceId: "places-source",
-          filter: ['has', 'point_count'],
-          textField: '{point_count}',
-          textSize: 14.0,
-          textColor: textColor,
-        ),
-      );
-
-      await mapController?.style.addLayer(
-        SymbolLayer(
-          id: "unclustered-points",
-          sourceId: "places-source",
-          filter: [
-            '!',
-            ['has', 'point_count'],
-          ],
-          iconImage: 'custom-marker',
-          iconSize: 0.25,
-          textField: '{name}',
-          textOffset: [0.0, 2.5],
-          textColor: textColor,
-        ),
-      );
+      return;
     }
+
+    await map.addSource(
+      GeoJsonSource(
+        id: _sourceId,
+        data: geoJsonString,
+        cluster: true,
+        clusterMinPoints: 2,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
+      ),
+    );
+
+    await map.addLayer(
+      CircleLayer(
+        id: _clustersLayerId,
+        sourceId: _sourceId,
+        filter: ['has', 'point_count'],
+        circleColor: AppConstants().neonBlue.toARGB32(),
+        circleRadius: 18.0,
+        circleStrokeWidth: 2.0,
+        circleStrokeColor: Colors.white.toARGB32(),
+      ),
+    );
+
+    await map.addLayer(
+      SymbolLayer(
+        id: _clusterCountLayerId,
+        sourceId: _sourceId,
+        filter: ['has', 'point_count'],
+        textField: '{point_count}',
+        textSize: 14.0,
+        textColor: textColor,
+      ),
+    );
+
+    await map.addLayer(
+      SymbolLayer(
+        id: _unclusteredLayerId,
+        sourceId: _sourceId,
+        filter: [
+          '!',
+          ['has', 'point_count'],
+        ],
+        iconImage: _markerImageId,
+        iconSize: 0.25,
+        textField: '{name}',
+        textOffset: [0.0, 2.5],
+        textColor: textColor,
+      ),
+    );
   }
 
-  void _listener(BuildContext context, MapState state) async {
-    if (state is MapInitalized) {
-      MapboxOptions.setAccessToken(state.mapKey);
-      _markerImage = state.marker;
-
-      position = CameraOptions(
-        center: Point(
-          coordinates: Position(state.initialLng!, state.initialLat!),
-        ),
-        zoom: zoom,
-      );
-    } else if (state is MapLocationUpdated) {
-      position = CameraOptions(
-        center: Point(
-          coordinates: Position(state.lng, state.lat),
-        ),
-        zoom: zoom,
-      );
-      await updateLocation();
-    } else if (state is MapPlacesLoaded) {
-      _cachedPlaces = state.places;
-      await _updateOrAddPlacesSource(_cachedPlaces);
-    }
+  // ---------------------------------------------------------------------------
+  // Theme (Standard style light preset)
+  // ---------------------------------------------------------------------------
+  String _rgba(int argb) {
+    final a = ((argb >> 24) & 0xFF) / 255;
+    final r = (argb >> 16) & 0xFF;
+    final g = (argb >> 8) & 0xFF;
+    final b = argb & 0xFF;
+    return 'rgba($r, $g, $b, ${a.toStringAsFixed(3)})';
   }
 
-  void _onStyleLoaded({MbxImage? markerBytes}) async {
-    _isStyleLoaded = true;
+  Future<void> _applyTheme() async {
+    final map = mapController;
+    if (!mounted || map == null || !_isStyleLoaded) return;
 
-    if (markerBytes != null) {
-      try {
-        await mapController?.style.addStyleImage(
-          'custom-marker',
-          3.0,
-          markerBytes,
-          false,
-          [],
-          [],
-          null,
-        );
-      } catch (e) {
-        log('Error adding style image: $e');
+    // Read everything that needs `context` before the first await.
+    final isDark = _isDark;
+    final textColor = _rgba(AppTheme().primaryText(context, false).toARGB32());
+
+    await map.setStyleImportConfigProperty(
+      _basemapImportId,
+      _lightPresetKey,
+      isDark ? _lightPresetNight : _lightPresetDay,
+    );
+
+    // The label colors were baked in when the layers were created; keep them
+    // in sync with the theme without recreating the layers.
+    for (final layerId in [_clusterCountLayerId, _unclusteredLayerId]) {
+      if (await map.styleLayerExists(layerId)) {
+        await map.setStyleLayerProperty(layerId, 'text-color', textColor);
       }
     }
+  }
 
-    if (_cachedPlaces.isNotEmpty) {
-      await _updateOrAddPlacesSource(_cachedPlaces);
-    }
+  // ---------------------------------------------------------------------------
+  // Map callbacks
+  // ---------------------------------------------------------------------------
+  void _onStyleLoaded() {
+    // A (re)loaded style has none of our image/source/layers yet.
+    _isStyleLoaded = false;
+
+    _enqueue(() async {
+      final map = mapController;
+      if (map == null) return;
+
+      final markerImage = _markerImage;
+      if (markerImage != null) {
+        try {
+          // sdf defaults to false and no stretch/content areas, same as before.
+          await map.addImage(_markerImageId, 3.0, markerImage);
+        } catch (e) {
+          log('Error adding style image: $e');
+        }
+      }
+
+      _isStyleLoaded = true;
+
+      await _applyTheme();
+      await _applyPlaces();
+    });
   }
 
   void _onMapCreated(MapboxMap controller) async {
     mapController = controller;
     await updateLocation();
+    if (!mounted) return;
     showCurrentLocationButton.value = true;
 
-    mapController?.addInteraction(
+    controller.addInteraction(
       TapInteraction(
-        FeaturesetDescriptor(layerId: 'unclustered-points'),
-        (feature, context) {
+        FeaturesetDescriptor(layerId: _unclusteredLayerId),
+        (feature, interactionContext) {
           final properties = feature.properties as Map<String, dynamic>;
 
           selectedPlace.value = PlaceModel(
@@ -359,13 +509,13 @@ class _MapViewState extends State<MapView> {
       ),
     );
 
-    mapController?.addInteraction(
+    controller.addInteraction(
       TapInteraction(
-        FeaturesetDescriptor(layerId: 'clusters'),
-        (feature, context) async {
+        FeaturesetDescriptor(layerId: _clustersLayerId),
+        (feature, interactionContext) async {
           await mapController?.flyTo(
             CameraOptions(
-              center: context.point,
+              center: interactionContext.point,
               zoom: zoom + 2.5,
             ),
             MapAnimationOptions(duration: 500),
@@ -389,6 +539,7 @@ class _MapViewState extends State<MapView> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _themeSubscription?.cancel();
     _lifecycleListener.dispose();
     selectedPlace.dispose();
     showCurrentLocationButton.dispose();
