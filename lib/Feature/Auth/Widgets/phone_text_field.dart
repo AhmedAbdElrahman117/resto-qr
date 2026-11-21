@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
-import 'package:flutter_intl_phone_field/phone_number.dart';
 import 'package:resto_qr/Core/Utils/app_constants.dart';
 import 'package:resto_qr/Core/Utils/app_localiztion.dart';
 import 'package:resto_qr/Core/Utils/app_text.dart';
