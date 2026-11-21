@@ -470,5 +470,8 @@
     "delete": "حذف",
     "signoutDescription": "سيكون عليك تسجيل الدخول مرة أخرى للوصول إلى لوحة التحكم الخاصة بك.",
     "limitedTimeOffer": "عرض لفترة محدودة (اختياري)",
-    "setDateTimeForOffer": "حدد تاريخ بداية ونهاية لهذا العرض"
+    "setDateTimeForOffer": "حدد تاريخ بداية ونهاية لهذا العرض",
+    "open": "فتح",
+    "failedToOpenInBrowser": "فشل الفتح في المتصفح",
+    "openQrCodeInBrowserError": "حدث خطأ أثناء محاولة فتح رمز QR في المتصفح."
 }

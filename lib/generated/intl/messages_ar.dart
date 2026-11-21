@@ -403,6 +403,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "فشل تحميل التخصيصات",
     ),
     "failedToLoadItems": m6,
+    "failedToOpenInBrowser": MessageLookupByLibrary.simpleMessage(
+      "فشل الفتح في المتصفح",
+    ),
     "fileNotFound": MessageLookupByLibrary.simpleMessage(
       "تعذر العثور على الملف المطلوب.",
     ),
@@ -654,6 +657,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم تحديث العرض بنجاح",
     ),
     "offers": MessageLookupByLibrary.simpleMessage("العروض"),
+    "open": MessageLookupByLibrary.simpleMessage("فتح"),
+    "openQrCodeInBrowserError": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ أثناء محاولة فتح رمز QR في المتصفح.",
+    ),
     "operationTimeout": MessageLookupByLibrary.simpleMessage(
       "انتهت مهلة العملية. يرجى المحاولة مرة أخرى.",
     ),

@@ -17,3 +17,5 @@ class QrCodePrintError extends QrCodeState {}
 class QrCodeSaveSuccess extends QrCodeState {}
 
 class QrCodeSaveError extends QrCodeState {}
+
+class QrCodeOpenInBrowserError extends QrCodeState {}

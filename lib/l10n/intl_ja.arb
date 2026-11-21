@@ -470,5 +470,8 @@
     "delete": "削除",
     "signoutDescription": "ダッシュボードにアクセスするには、再度ログインする必要があります。",
     "limitedTimeOffer": "期間限定オファー（任意）",
-    "setDateTimeForOffer": "このオファーの開始日と終了日を設定してください"
+    "setDateTimeForOffer": "このオファーの開始日と終了日を設定してください",
+    "open": "開く",
+    "failedToOpenInBrowser": "ブラウザで開けませんでした",
+    "openQrCodeInBrowserError": "QRコードをブラウザで開こうとしてエラーが発生しました。"
 }

@@ -470,6 +470,9 @@
     "delete": "Supprimer",
     "signoutDescription": "Vous devrez vous reconnecter pour accéder à votre tableau de bord.",
     "limitedTimeOffer": "Offre à durée limitée (facultatif)",
-    "setDateTimeForOffer": "Définissez une date de début et de fin pour cette offre"
+    "setDateTimeForOffer": "Définissez une date de début et de fin pour cette offre",
+    "open": "Ouvrir",
+    "failedToOpenInBrowser": "Échec de l'ouverture dans le navigateur",
+    "openQrCodeInBrowserError": "Une erreur s'est produite lors de la tentative d'ouverture du code QR dans le navigateur."
 
 }

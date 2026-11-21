@@ -10,6 +10,7 @@ import 'package:resto_qr/Core/Services/print_service.dart';
 import 'package:resto_qr/Core/Utils/app_share.dart';
 import 'package:resto_qr/Feature/Qr/View%20Model/QR%20Code%20Cubit/qr_code_state.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QrCodeCubit extends Cubit<QrCodeState> with SafeCubit {
   QrCodeCubit({required this.menuUrl}) : super(QrCodeInitial());
@@ -90,5 +91,15 @@ class QrCodeCubit extends Cubit<QrCodeState> with SafeCubit {
       return qrImageBytes!;
     }
     return qrImageBytes!;
+  }
+
+  Future<void> openQrCodeInBrowser({required String target}) async {
+    try {
+      final Uri url = Uri.https(target);
+
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      safeEmit(QrCodeOpenInBrowserError());
+    }
   }
 }

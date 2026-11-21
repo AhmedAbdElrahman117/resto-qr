@@ -470,6 +470,9 @@
     "delete": "删除",
     "signoutDescription": "您需要重新登录才能访问您的控制面板。",
     "limitedTimeOffer": "限时优惠（可选）",
-    "setDateTimeForOffer": "为此优惠设置开始和结束日期"
+    "setDateTimeForOffer": "为此优惠设置开始和结束日期",
+    "open": "打开",
+    "failedToOpenInBrowser": "在浏览器中打开失败",
+    "openQrCodeInBrowserError": "尝试在浏览器中打开二维码时发生错误。"
 
 }

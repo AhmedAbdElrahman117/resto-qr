@@ -470,6 +470,8 @@
     "delete": "Löschen",
     "signoutDescription": "Sie müssen sich erneut anmelden, um auf Ihr Dashboard zuzugreifen.",
     "limitedTimeOffer": "Zeitlich begrenztes Angebot (optional)",
-    "setDateTimeForOffer": "Legen Sie ein Start- und Enddatum für dieses Angebot fest"
-
+    "setDateTimeForOffer": "Legen Sie ein Start- und Enddatum für dieses Angebot fest",
+    "open": "Öffnen",
+    "failedToOpenInBrowser": "Öffnen im Browser fehlgeschlagen",
+    "openQrCodeInBrowserError": "Beim Versuch, den QR-Code im Browser zu öffnen, ist ein Fehler aufgetreten."
 }

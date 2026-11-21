@@ -343,6 +343,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "カスタマイズの読み込みに失敗しました",
     ),
     "failedToLoadItems": m6,
+    "failedToOpenInBrowser": MessageLookupByLibrary.simpleMessage(
+      "ブラウザで開けませんでした",
+    ),
     "fileNotFound": MessageLookupByLibrary.simpleMessage(
       "要求されたファイルが見つかりませんでした。",
     ),
@@ -548,6 +551,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "オファーを正常に更新しました",
     ),
     "offers": MessageLookupByLibrary.simpleMessage("オファー"),
+    "open": MessageLookupByLibrary.simpleMessage("開く"),
+    "openQrCodeInBrowserError": MessageLookupByLibrary.simpleMessage(
+      "QRコードをブラウザで開こうとしてエラーが発生しました。",
+    ),
     "operationTimeout": MessageLookupByLibrary.simpleMessage(
       "操作がタイムアウトしました。もう一度お試しください。",
     ),

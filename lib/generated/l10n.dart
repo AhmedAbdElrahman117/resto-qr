@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -3964,6 +3965,31 @@ class S {
     return Intl.message(
       'Set a start and end date for this offer',
       name: 'setDateTimeForOffer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open`
+  String get open {
+    return Intl.message('Open', name: 'open', desc: '', args: []);
+  }
+
+  /// `Failed to open in browser`
+  String get failedToOpenInBrowser {
+    return Intl.message(
+      'Failed to open in browser',
+      name: 'failedToOpenInBrowser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `An error occurred while trying to open the QR code in the browser.`
+  String get openQrCodeInBrowserError {
+    return Intl.message(
+      'An error occurred while trying to open the QR code in the browser.',
+      name: 'openQrCodeInBrowserError',
       desc: '',
       args: [],
     );

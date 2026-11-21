@@ -445,6 +445,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Échec du chargement des personnalisations",
     ),
     "failedToLoadItems": m6,
+    "failedToOpenInBrowser": MessageLookupByLibrary.simpleMessage(
+      "Échec de l\'ouverture dans le navigateur",
+    ),
     "fileNotFound": MessageLookupByLibrary.simpleMessage(
       "Le fichier demandé est introuvable.",
     ),
@@ -708,6 +711,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Offre mise à jour avec succès",
     ),
     "offers": MessageLookupByLibrary.simpleMessage("Offres"),
+    "open": MessageLookupByLibrary.simpleMessage("Ouvrir"),
+    "openQrCodeInBrowserError": MessageLookupByLibrary.simpleMessage(
+      "Une erreur s\'est produite lors de la tentative d\'ouverture du code QR dans le navigateur.",
+    ),
     "operationTimeout": MessageLookupByLibrary.simpleMessage(
       "L\'opération a expiré. Veuillez réessayer.",
     ),

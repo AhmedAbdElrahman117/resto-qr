@@ -470,5 +470,8 @@
     "delete": "Delete",
     "signoutDescription": "You will need to log in again to access your dashboard.",
     "limitedTimeOffer": "Limited Time Offer (Optional)",
-    "setDateTimeForOffer": "Set a start and end date for this offer"
+    "setDateTimeForOffer": "Set a start and end date for this offer",
+    "open": "Open",
+    "failedToOpenInBrowser": "Failed to open in browser",
+    "openQrCodeInBrowserError": "An error occurred while trying to open the QR code in the browser."
 }

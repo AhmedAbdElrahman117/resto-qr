@@ -391,6 +391,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Failed to Load Customizations",
     ),
     "failedToLoadItems": m6,
+    "failedToOpenInBrowser": MessageLookupByLibrary.simpleMessage(
+      "Failed to open in browser",
+    ),
     "fileNotFound": MessageLookupByLibrary.simpleMessage(
       "The requested file could not be found.",
     ),
@@ -634,6 +637,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Offer updated successfully",
     ),
     "offers": MessageLookupByLibrary.simpleMessage("Offers"),
+    "open": MessageLookupByLibrary.simpleMessage("Open"),
+    "openQrCodeInBrowserError": MessageLookupByLibrary.simpleMessage(
+      "An error occurred while trying to open the QR code in the browser.",
+    ),
     "operationTimeout": MessageLookupByLibrary.simpleMessage(
       "The operation timed out. Please try again.",
     ),

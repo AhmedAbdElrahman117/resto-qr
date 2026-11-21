@@ -470,6 +470,9 @@
     "delete": "Eliminar",
     "signoutDescription": "Tendrás que iniciar sesión de nuevo para acceder a tu panel.",
     "limitedTimeOffer": "Oferta por tiempo limitado (opcional)",
-    "setDateTimeForOffer": "Establece una fecha de inicio y de fin para esta oferta"
+    "setDateTimeForOffer": "Establece una fecha de inicio y de fin para esta oferta",
+    "open": "Abrir",
+    "failedToOpenInBrowser": "No se pudo abrir en el navegador",
+    "openQrCodeInBrowserError": "Se produjo un error al intentar abrir el código QR en el navegador."
 
 }

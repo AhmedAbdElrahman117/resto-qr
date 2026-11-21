@@ -170,26 +170,45 @@ class _QrCodePageState extends State<QrCodePage> {
                           ],
                         ),
 
-                        SizedBox(
-                          width: .infinity,
-                          child: BlocWidget<QrCodeCubit, QrCodeState>(
-                            builder: (context, state) {
-                              var isLoading = state is QrCodeLoading;
-
-                              return _filledButton(
+                        Row(
+                          spacing: 12,
+                          children: [
+                            Expanded(
+                              child: _filledButton(
                                 context,
-                                label: l10n.saveToGallery,
-                                icon: Icons.download_rounded,
-                                onPressed: isLoading
-                                    ? null
-                                    : () {
-                                        context
-                                            .read<QrCodeCubit>()
-                                            .saveQrCodeToGallery(qrKey: _qrKey);
-                                      },
-                              );
-                            },
-                          ),
+                                label: l10n.open,
+                                icon: Icons.open_in_new,
+                                onPressed: () {
+                                  context
+                                      .read<QrCodeCubit>()
+                                      .openQrCodeInBrowser(target: menuUrl);
+                                },
+                              ),
+                            ),
+
+                            Expanded(
+                              child: BlocWidget<QrCodeCubit, QrCodeState>(
+                                builder: (context, state) {
+                                  var isLoading = state is QrCodeLoading;
+
+                                  return _filledButton(
+                                    context,
+                                    label: l10n.saveToGallery,
+                                    icon: Icons.download_rounded,
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            context
+                                                .read<QrCodeCubit>()
+                                                .saveQrCodeToGallery(
+                                                  qrKey: _qrKey,
+                                                );
+                                          },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -222,6 +241,11 @@ class _QrCodePageState extends State<QrCodePage> {
       Toast().showError(
         title: AppLocalization.of(context).shareFailed,
         description: AppLocalization.of(context).qrShareErrorDescription,
+      );
+    } else if (state is QrCodeOpenInBrowserError) {
+      Toast().showError(
+        title: AppLocalization.of(context).failedToOpenInBrowser,
+        description: AppLocalization.of(context).openQrCodeInBrowserError,
       );
     }
   }

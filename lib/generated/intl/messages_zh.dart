@@ -313,6 +313,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "加载自定义设置失败",
     ),
     "failedToLoadItems": m6,
+    "failedToOpenInBrowser": MessageLookupByLibrary.simpleMessage("在浏览器中打开失败"),
     "fileNotFound": MessageLookupByLibrary.simpleMessage("找不到请求的文件。"),
     "fileTooLarge": MessageLookupByLibrary.simpleMessage("文件太大。请上传较小的文件。"),
     "fileUploadFailed": MessageLookupByLibrary.simpleMessage(
@@ -484,6 +485,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "offerNameHint": MessageLookupByLibrary.simpleMessage("例如：超值套餐"),
     "offerUpdatedDescription": MessageLookupByLibrary.simpleMessage("优惠已成功更新"),
     "offers": MessageLookupByLibrary.simpleMessage("优惠"),
+    "open": MessageLookupByLibrary.simpleMessage("打开"),
+    "openQrCodeInBrowserError": MessageLookupByLibrary.simpleMessage(
+      "尝试在浏览器中打开二维码时发生错误。",
+    ),
     "operationTimeout": MessageLookupByLibrary.simpleMessage("操作超时。请重试。"),
     "optionalUpdateDescription": MessageLookupByLibrary.simpleMessage(
       "RestoQR的新版本已发布。您想要更新吗？",
