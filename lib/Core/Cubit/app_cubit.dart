@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:resto_qr/Core/Models/app_settings.dart';
 import 'package:resto_qr/Core/Models/user_notification_settings.dart';

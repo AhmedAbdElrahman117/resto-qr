@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:resto_qr/Core/Models/user_notification_settings.dart';
 
 class AppSettings {

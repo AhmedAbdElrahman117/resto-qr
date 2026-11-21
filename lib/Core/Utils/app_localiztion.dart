@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    hide GlobalMaterialLocalizations;
 import 'package:intl/intl.dart';
 import 'package:resto_qr/generated/l10n.dart';
 
@@ -12,7 +13,6 @@ class AppLocalization {
     S.delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
   ];
 
   static List<Locale> supportedLocales = S.delegate.supportedLocales;

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resto_qr/Core/Cubit/app_cubit.dart';
 import 'package:resto_qr/Core/Utils/app_localiztion.dart';

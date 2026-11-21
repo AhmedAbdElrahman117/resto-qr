@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:resto_qr/Core/Utils/assets.dart';
 import 'package:resto_qr/Core/Utils/app_localiztion.dart';
 import 'package:resto_qr/Core/Widgets/success_view.dart';

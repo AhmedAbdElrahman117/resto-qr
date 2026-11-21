@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:resto_qr/Core/Services/pick_image.dart';
 import 'package:resto_qr/Core/Utils/app_constants.dart';
