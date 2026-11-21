@@ -38,36 +38,36 @@ dependencies:
   cupertino_icons: ^2.0.0
   flutter_bloc: ^9.1.1
   hydrated_bloc: ^11.0.0
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   flutter_animate: ^4.5.2
   smooth_page_indicator: ^3.0.0
-  flutter_svg: ^2.2.4
-  supabase_flutter: ^2.12.0
+  flutter_svg: ^2.5.0
+  supabase_flutter: ^2.18.3
   pinput: ^7.0.0
   dartz: ^0.10.1
   loading_animation_widget: ^1.3.0
   font_awesome_flutter: ^11.0.0
   flutter_intl_phone_field: ^1.0.0
-  image_picker: ^1.2.1
-  toastification: ^3.0.3
+  image_picker: ^1.2.4
+  toastification: ^3.2.2
   persistent_bottom_nav_bar: ^6.2.1
-  fl_chart: ^1.1.1
+  fl_chart: ^1.3.1
   skeletonizer: ^3.0.0
   cached_network_image: ^4.0.7
-  package_info_plus: ^10.2.1
-  intl_utils: ^2.8.14
+  package_info_plus: ^10.2.2
+  intl_utils: ^2.8.17
   flutter_colorpicker: ^1.1.0
-  intl: ^0.20.2
+  intl: ^0.20.3
   qr_flutter: ^4.1.0
-  flutter_image_compress: ^2.4.0
+  flutter_image_compress: ^2.5.1
   http: ^1.6.0
   gal: ^3.0.1
-  share_plus: ^13.3.0
-  printing: ^5.14.2
-  pdf: ^3.11.3
-  fluttertoast: ^10.0.0
-  permission_handler: ^13.0.0
-  geolocator: ^14.0.2
+  share_plus: ^13.3.1
+  printing: ^5.15.1
+  pdf: ^3.13.1
+  fluttertoast: ^10.0.3
+  permission_handler: ^13.0.2
+  geolocator: ^14.1.2
   sentry_flutter: ^10.6.0
   url_launcher: ^6.3.3
   mapbox_maps_flutter: ^3.35.2
