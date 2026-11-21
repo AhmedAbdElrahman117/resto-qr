@@ -47,11 +47,10 @@ class Dashboard extends StatelessWidget {
                       // Today Stats
                       PeriodStats(
                         periodLabel: l10n.today,
-                        totalMenuViews: data.todayStats.totalMenuViews + 5,
-                        totalItemViews: data.todayStats.totalItemViews + 8,
-                        totalPromoClicks:
-                            data.todayStats.totalPromoClicks + 120,
-                        growthPercentage: data.todayStats.growthPercentage + 7,
+                        totalMenuViews: data.todayStats.totalMenuViews,
+                        totalItemViews: data.todayStats.totalItemViews,
+                        totalPromoClicks: data.todayStats.totalPromoClicks,
+                        growthPercentage: data.todayStats.growthPercentage,
                         chartData: data.todayStats.chartData.map(
                           (key, value) => MapEntry(key, value.toDouble()),
                         ),
