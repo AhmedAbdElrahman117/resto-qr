@@ -110,6 +110,47 @@ class _QrCodePageState extends State<QrCodePage> {
                           spacing: 12,
                           children: [
                             Expanded(
+                              child: _filledButton(
+                                context,
+                                label: l10n.open,
+                                icon: Icons.open_in_new,
+                                onPressed: () {
+                                  context
+                                      .read<QrCodeCubit>()
+                                      .openQrCodeInBrowser(target: menuUrl);
+                                },
+                              ),
+                            ),
+
+                            Expanded(
+                              child: BlocWidget<QrCodeCubit, QrCodeState>(
+                                builder: (context, state) {
+                                  var isLoading = state is QrCodeLoading;
+
+                                  return _filledButton(
+                                    context,
+                                    label: l10n.saveToGallery,
+                                    icon: Icons.download_rounded,
+                                    onPressed: isLoading
+                                        ? null
+                                        : () {
+                                            context
+                                                .read<QrCodeCubit>()
+                                                .saveQrCodeToGallery(
+                                                  qrKey: _qrKey,
+                                                );
+                                          },
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        Row(
+                          spacing: 12,
+                          children: [
+                            Expanded(
                               child: BlocWidget<QrCodeCubit, QrCodeState>(
                                 builder: (context, state) {
                                   var isLoading = state is QrCodeLoading;
@@ -162,47 +203,6 @@ class _QrCodePageState extends State<QrCodePage> {
                                             context
                                                 .read<QrCodeCubit>()
                                                 .printQrCode(qrKey: _qrKey);
-                                          },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        Row(
-                          spacing: 12,
-                          children: [
-                            Expanded(
-                              child: _filledButton(
-                                context,
-                                label: l10n.open,
-                                icon: Icons.open_in_new,
-                                onPressed: () {
-                                  context
-                                      .read<QrCodeCubit>()
-                                      .openQrCodeInBrowser(target: menuUrl);
-                                },
-                              ),
-                            ),
-
-                            Expanded(
-                              child: BlocWidget<QrCodeCubit, QrCodeState>(
-                                builder: (context, state) {
-                                  var isLoading = state is QrCodeLoading;
-
-                                  return _filledButton(
-                                    context,
-                                    label: l10n.saveToGallery,
-                                    icon: Icons.download_rounded,
-                                    onPressed: isLoading
-                                        ? null
-                                        : () {
-                                            context
-                                                .read<QrCodeCubit>()
-                                                .saveQrCodeToGallery(
-                                                  qrKey: _qrKey,
-                                                );
                                           },
                                   );
                                 },
